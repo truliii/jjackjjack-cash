@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @WebFilter("/*")
 public class EncodingFilter extends HttpFilter implements Filter {
 	//ANSI코드
-	final String KMJ = "\u001B[43m";
-	final String RESET = "\u001B[0m"; 
+	static final String KMJ = "\u001B[43m";
+	static final String RESET = "\u001B[0m"; 
 	
     public EncodingFilter() {
         super();
