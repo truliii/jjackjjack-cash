@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goodee.cash.mapper.HashtagMapper">
+	<select id="selectTagCountByMonth" 
+			parameterType="java.util.Map"
+			resultType="java.util.Map">
+		SELECT word, COUNT(*) cnt
+		FROM hashtag h
+		INNER JOIN cashbook c
+		ON h.cashbook_no = c.cashbook_no
+		<where>
+			c.member_id = #{memberId}
+			AND YEAR(c.cashbook_date) = #{targetYear}
+			AND MONTH(c.cashbook_date) = #{targetMonth}
+			GROUP BY word
+		</where>
+	</select>
+	
+	<insert id="insertHashtag"
+			parameterType="com.goodee.cash.vo.Hashtag">
+		INSERT INTO hashtag (
+			cashbook_no,
+			word,
+			createdate,
+			updatedate)
+		VALUES (
+			#{cashbookNo},
+			#{word},
+			NOW(),
+			NOW())
+	</insert>
+	
+	<delete id="deleteHashtag"
+			parameterType="com.goodee.cash.vo.Hashtag">
+		DELETE FROM hashtag
+		<where>
+			cashbook_no = #{cashbookNo}
+		</where>
+	</delete>
+</mapper>

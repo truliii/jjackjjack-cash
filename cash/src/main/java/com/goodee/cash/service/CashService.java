@@ -8,9 +8,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.goodee.cash.mapper.CashMapper;
+import com.goodee.cash.mapper.HashtagMapper;
 import com.goodee.cash.vo.Cashbook;
+import com.goodee.cash.vo.Hashtag;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,10 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 public class CashService implements ICashService{
-	@Autowired
-	public CashMapper cashMapper;
+	@Autowired public CashMapper cashMapper;
+	@Autowired public HashtagMapper hashtagMapper;
+	//ANSI코드
+	static final String KMJ = "\u001B[43m";
+	static final String RESET = "\u001B[0m";    
 	
-	//요청단에서 targetYear와 targetMonth가 넘어오지 않으면 null
+	//월별 가계부 출력
 	@Override
 	public Map<String, Object> getCalendar(String memberId, Integer targetYear, Integer targetMonth){
 		
@@ -58,7 +64,8 @@ public class CashService implements ICashService{
 		paramMap.put("targetYear", targetYear);
 		paramMap.put("targetMonth", targetMonth+1);
 		List<Cashbook> list = cashMapper.selectCashbookListByMonth(paramMap);
-
+		List<Map<String, Object>> htList = hashtagMapper.selectTagCountByMonth(paramMap);
+		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("targetYear", targetYear);
 		resultMap.put("targetMonth", targetMonth);
@@ -67,9 +74,57 @@ public class CashService implements ICashService{
 		resultMap.put("endBlank", endBlank);
 		resultMap.put("totalTd", totalTd);
 		resultMap.put("list", list);
+		resultMap.put("htList", htList);
 
-		log.debug("CashService.getCalendar() resultMap : " + resultMap.toString());
+		log.debug(KMJ + resultMap.toString() + "<-- CashService.getCalendar() resultMap" + RESET);
 
 		return resultMap;
+	}
+	
+	@Override
+	public List<Cashbook> getDailyCashbook(Map<String, Object> paramMap){
+		List<Cashbook> list = cashMapper.selectCashbookListByDate(paramMap);
+		return list;
+	}
+	
+	//가계부 입력
+	public int addCashbook(Cashbook cashbook) {
+		int addCashRow = cashMapper.insertCashbook(cashbook);
+		return addCashRow;
+	}
+	
+	//가계부 수정
+	public int modifyCashbook(Cashbook cashbook) {
+		
+		int modifyCashRow = cashMapper.updateCashbook(cashbook);
+		
+		return modifyCashRow;
+	}
+	
+	//가계부 삭제
+	public int removeCashbook(Cashbook cashbook) {
+		
+		int removeCashRow = cashMapper.deleteCashbook(cashbook);
+		
+		return removeCashRow;
+	}
+	
+	//월별 각 태그의 수
+	public List<Map<String, Object>> getHashtagCnt(HashMap<String, Object> paramMap){
+		List<Map<String, Object>> list = hashtagMapper.selectTagCountByMonth(paramMap);
+		log.debug(KMJ + list.toString() + "<-- HashtagService.getHashtag list" + RESET);
+		return list;
+	}
+	
+	//태그 입력
+	public int addHashtag(Hashtag hashtag) {
+		int addHashtagRow = hashtagMapper.insertHashtag(hashtag);
+		return addHashtagRow;
+	}
+	
+	//태그 삭제
+	public int removeHashtag(Hashtag hashtag) {
+		int removeHashtagRow = hashtagMapper.deleteHashtag(hashtag);
+		return removeHashtagRow;
 	}
 }

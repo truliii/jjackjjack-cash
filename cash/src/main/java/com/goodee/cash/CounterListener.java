@@ -15,8 +15,8 @@ public class CounterListener implements HttpSessionListener {
 	private CounterService counterService;
 	
 	//ANSI코드
-	final String KMJ = "\u001B[43m";
-	final String RESET = "\u001B[0m";
+	static final String KMJ = "\u001B[43m";
+	static final String RESET = "\u001B[0m";
 	
     public CounterListener() {
     }

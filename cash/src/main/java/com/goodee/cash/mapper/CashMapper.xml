@@ -15,4 +15,67 @@
 		AND MONTH(cashbook_date) = #{targetMonth}
 		ORDER BY cashbook_date ASC
 	</select>
+	
+	<select id="selectCashbookListByDate"
+			parameterType="java.util.Map"
+			resultType="com.goodee.cash.vo.Cashbook">
+		SELECT 
+			cashbook_no cashbookNo,
+			member_id memberId,
+			category,
+			cashbook_date cashbookDate,
+			price,
+			memo,
+			createdate,
+			updatedate
+		FROM cashbook
+		<where>
+			member_id = #{memberId}
+			AND YEAR(cashbook_date) = #{targetYear}
+			AND MONTH(cashbook_date) = #{targetMonth}
+			AND DAY(cashbook_date) = #{targetDate}
+		</where>
+	</select>
+	
+	<insert id="insertCashbook"
+			parameterType="com.goodee.cash.vo.Cashbook">
+		INSERT INTO cashbook(
+			member_id,
+			category,
+			cashbook_date,
+			price,
+			memo,
+			createdate,
+			updatedate)
+		VALUES (
+			#{memberId},
+			#{category},
+			#{cashbookDate},
+			#{price},
+			#{memo},
+			NOW(),
+			NOW())
+	</insert>
+	
+	<update id="updateCashbook"
+			parameterType="com.goodee.cash.vo.Cashbook">
+		UPDATE cashbook
+		SET 
+			category = ${category},
+			price = ${price},
+			memo = ${memo},
+			updatedate = NOW()
+		<where>
+			cashbook_no = ${cashbookNo}
+		</where>		
+	</update>
+	
+	<delete id="deleteCashbook"
+			parameterType="com.goodee.cash.vo.Cashbook">
+		DELETE
+		FROM cashbook
+		<where>
+			cashbook_no = ${cashbookNo}
+		</where>
+	</delete>
 </mapper>

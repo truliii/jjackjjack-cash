@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.goodee.cash.mapper.LoginMapper">
-	<select id="selectMemberId" parameterType="Map" resultType="int">
-		SELECT COUNT(*)
+<mapper namespace="com.goodee.cash.mapper.MemberMapper">
+	<select id="selectMemberById" parameterType="com.goodee.cash.vo.Member" resultType="com.goodee.cash.vo.Member">
+		SELECT 
+			member_id memberId
 		FROM member
 		<where>
-			memberId = #{memberId}
-			AND memberPw = #{memberPw};
+			member_id = #{memberId}
+			AND member_pw = PASSWORD(#{memberPw})
 		</where>
 	</select>
+	
+	<select id="selectIdCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM member
+		WHERE member_id = #{memberId}
+	</select>
+	
+	<insert id="insertMember" parameterType="com.goodee.cash.vo.Member">
+		INSERT INTO member (
+			member_id,
+			member_pw,
+			createdate,
+			updatedate)
+		VALUES (
+			#{memberId},
+			PASSWORD(#{memberPw}),
+			NOw(),
+			NOW())
+	</insert>
 </mapper>

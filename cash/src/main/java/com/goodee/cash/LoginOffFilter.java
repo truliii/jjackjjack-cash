@@ -37,6 +37,7 @@ public class LoginOffFilter extends HttpFilter implements Filter {
 		
 		if(session.getAttribute("loginMember") != null) {
 			res.sendRedirect(req.getContextPath()+"/on/cashbook");
+			return;
 		}
 		
 		chain.doFilter(request, response);
